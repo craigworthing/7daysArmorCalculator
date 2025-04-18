@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+  background: #222;
+  color:#999;
+  font-family: "Roboto Condensed", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+body, input, select {
+  font-size:1.2rem;
+}
+
+div {
+  margin: 1em;
+}
+
+label {
+  width: 90px;
+  display: inline-block;
+}
+
+input {
+  font-size: 1.5rem;
+  width: 4rem;
+}
+
+input,
+select {
+  padding: 0.2rem;
+}
+#armor {
+  width: 250px;
+}
+#armor > select {
+  margin-bottom: 0.5rem;
+}
+
+#armor > select:last-child {
+  margin: 0;
+}
+
+h3 {
+  float: left;
+  width: 100%;
+}
+
+    </style>
+<body>
+    <div>
+        <select id="difficulty"></select>
+        <select id="enemy"></select>
+        <input id="damage" type="text" value="100" />
+      </div>
+      <div>
+        <label>Pain Tolerance</label>
+        <select id="painTolerance">
+          <option value="0">0</option>
+          <option value="5">1 (5%)</option>
+          <option value="10">2 (10%)</option>
+          <option value="15">3 (15%)</option>
+          <option selected value="20">4 (20%)</option>
+          <option value="25">5 (25%)</option>
+        </select>
+      </div>
+      <div id="armor"></div>
+      <h3>Damage taken: <span id="total"></span></h3>
+      
+<script>
+    const options = document.getElementById("armor");
+
+const difficultyObject = [
+  { diff: "Scavenger (0.5x)", dmg: 0.5 },
+  { diff: "Adventurer (0.75x)", dmg: 0.75 },
+  { diff: "Nomad (1x)", dmg: 1.0 },
+  { diff: "Warrior (1.5x)", dmg: 1.5 },
+  { diff: "Survivalist (2x)", dmg: 2.0 },
+  { diff: "Insane (2.5x)", dmg: 2.5 },
+]
+
+const enemyObject = [
+  { diff: "Normal (10)", dmg: 10 },
+  { diff: "Normal Feral & Big (20)", dmg: 20 },
+  { diff: "Big & Feral (40)", dmg: 40 },
+]
+
+const gear = [
+  { type: "Light 1", rating: 8, modifier: 0 },
+  { type: "Light 2", rating: 8.8, modifier: 0 },
+  { type: "Light 3", rating: 9.7, modifier: 0 },
+  { type: "Light 4", rating: 10.5, modifier: 0 },
+  { type: "Light 5", rating: 11.4, modifier: 0 },
+  { type: "Light 6", rating: 12.3, modifier: 0 },
+  { type: "Light (2%)", rating: 8, modifier: 2, chest: true },
+  { type: "Light (3%)", rating: 8.8, modifier: 3, chest: true },
+  { type: "Light (6%)", rating: 9.7, modifier: 6, chest: true },
+  { type: "Light (8%)", rating: 10.5, modifier: 8, chest: true },
+  { type: "Light (12%)", rating: 11.4, modifier: 10, chest: true },
+  { type: "Light (15%)", rating: 12.3, modifier: 15, chest: true },
+  { type: "Medium 1", rating: 13.0, modifier: 0 },
+  { type: "Medium 2", rating: 13.8, modifier: 0 },
+  { type: "Medium 3", rating: 14.7, modifier: 0 },
+  { type: "Medium 4", rating: 15.5, modifier: 0 },
+  { type: "Medium 5", rating: 16.4, modifier: 0 },
+  { type: "Medium 6", rating: 17.3, modifier: 0 },
+  { type: "Heavy 1", rating: 18.0, modifier: 0 },
+  { type: "Heavy 2", rating: 18.6, modifier: 0 },
+  { type: "Heavy 3", rating: 19.2, modifier: 0 },
+  { type: "Heavy 4", rating: 19.8, modifier: 0 },
+  { type: "Heavy 5", rating: 20.4, modifier: 0 },
+  { type: "Heavy 6", rating: 21, modifier: 0 },
+]
+
+const slots = ["Head", "Chest", "Gloves", "Boots"];
+
+function build() {
+  buildOptions();
+  buildDifficulty();
+  buildEnemy();
+
+  //calc last
+  calc();
+}
+
+function calc() {
+  let totalArmorReduction = 0;
+  let modifiers = 0;
+  let pt = parseInt(painTolerance.value);
+  damage.value = difficulty.value * enemy.value;
+
+  options.childNodes.forEach((ele) => {
+    if (ele.tagName == "SELECT") {
+      const modifier = parseInt(ele.getAttribute("modifier"))
+      totalArmorReduction += parseInt(ele.value)
+      modifiers += modifier
+    }
+  })
+
+  let aReduction = damage.value - damage.value * (totalArmorReduction / 100);
+  let ptReduction = aReduction * ((pt + modifiers) / 100);
+  console.log(aReduction, pt, modifiers);
+  let totalReduction = aReduction - ptReduction;
+  total.innerText =
+    totalReduction / damage.value < 0.1 ? "MAX " + 0.1 * damage.value : totalReduction;
+}
+
+function buildOptions() {
+  for (let i = 0; i < slots.length; i++) {
+    const select = document.createElement("select")
+    gear.forEach((t) => {
+      if (i != 1 && t.chest)
+      	return;
+        
+      const option = document.createElement("option");
+      option.text = t.type;
+      option.value = t.rating;
+      option.setAttribute("modifier", t.modifier);
+      select.add(option);
+    })
+
+    select.setAttribute("modifier", gear[0].modifier)
+
+    const label = document.createElement("label");
+    label.innerText = slots[i];
+
+    options.appendChild(label)
+    options.appendChild(select)
+    select.addEventListener("change", (ev) => {
+      const mod =
+        ev.target.options[ev.target.selectedIndex].getAttribute("modifier");
+      ev.srcElement.setAttribute("modifier", mod);
+      calc();
+    })
+  }
+}
+
+function buildDifficulty() {
+  difficultyObject.forEach((d,index) => {
+    const option = document.createElement("option");
+    option.innerText = d.diff;
+    option.value = d.dmg;
+    if (index==4)
+    	option.selected = true;
+    difficulty.appendChild(option);
+  })
+}
+
+function buildEnemy() {
+  enemyObject.forEach((d) => {
+    const option = document.createElement("option");
+    option.innerText = d.diff;
+    option.value = d.dmg;
+    enemy.appendChild(option);
+  })
+}
+
+//events
+damage.addEventListener("keyup", () => {
+  calc();
+});
+
+painTolerance.addEventListener("change", () => {
+  calc();
+});
+
+difficulty.addEventListener("change", () => {
+  calc();
+});
+
+enemy.addEventListener("change", () => {
+  calc();
+});
+
+//init
+build()
+
+</script>
+</body>
+</html>
