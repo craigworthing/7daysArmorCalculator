@@ -34,8 +34,11 @@ input,
 select {
   padding: 0.2rem;
 }
-#armor {
+ #game, #armor {
   width: 250px;
+}
+        #game label {
+    width:120px;
 }
 #armor > select {
   margin-bottom: 0.5rem;
@@ -52,7 +55,7 @@ h3 {
 
     </style>
 <body>
-    <div>
+    <div id="game">
         <label>Difficulty</label>
         <select id="difficulty"></select>
         <label>Enemy</label>
