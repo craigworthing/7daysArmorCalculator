@@ -23,13 +23,18 @@
 
   .content {
     margin: 1em;
-    margin-bottom:1.5em;
+    margin-bottom: 1.5em;
+    display: flex;
+    flex-flow: row wrap;
   }
 
   .row {
-    float: left;
-    clear: both;
-    margin-bottom:.2em;
+    margin-bottom: .4em;
+    flex: 0 1 100%;
+  }
+
+  .row:last-child {
+    margin-bottom: 0;
   }
 
   label {
@@ -58,11 +63,11 @@
     display: inline-block;
     margin: 0;
     padding: 0;
-    color: #880000;
+    color: #EEAAAA;
   }
 
   #damageTaken h2 {
-    color: #AA0000;
+    color: #CC0000;
   }
 
   #game>select {
@@ -81,6 +86,14 @@
   h3 {
     float: left;
     width: 100%;
+  }
+
+  @media (max-width: 768px) {
+
+    label,
+    select {
+      width: 100%;
+    }
   }
 </style>
 
@@ -111,6 +124,8 @@
         <option selected value="20">4 (20%)</option>
         <option value="25">5 (25%)</option>
       </select>
+      <br />
+      <small>*Reduces damage received <b>after</b> armor damage reduction</small>
     </div>
 
   </div>
@@ -147,12 +162,12 @@
       { type: "Light 4", rating: 10.5, modifier: 0 },
       { type: "Light 5", rating: 11.4, modifier: 0 },
       { type: "Light 6", rating: 12.3, modifier: 0 },
-      { type: "Light (2%)", rating: 8, modifier: 2, chest: true },
-      { type: "Light (3%)", rating: 8.8, modifier: 3, chest: true },
-      { type: "Light (6%)", rating: 9.7, modifier: 6, chest: true },
-      { type: "Light (8%)", rating: 10.5, modifier: 8, chest: true },
-      { type: "Light (12%)", rating: 11.4, modifier: 10, chest: true },
-      { type: "Light (15%)", rating: 12.3, modifier: 15, chest: true },
+      { type: "Light 1 (2%)", rating: 8, modifier: 2, chest: true },
+      { type: "Light 2 (3%)", rating: 8.8, modifier: 3, chest: true },
+      { type: "Light 3 (6%)", rating: 9.7, modifier: 6, chest: true },
+      { type: "Light 4 (8%)", rating: 10.5, modifier: 8, chest: true },
+      { type: "Light 5 (12%)", rating: 11.4, modifier: 10, chest: true },
+      { type: "Light 6 (15%)", rating: 12.3, modifier: 15, chest: true },
       { type: "Medium 1", rating: 13.0, modifier: 0 },
       { type: "Medium 2", rating: 13.8, modifier: 0 },
       { type: "Medium 3", rating: 14.7, modifier: 0 },
@@ -187,14 +202,14 @@
 
       options.childNodes.forEach((ele) => {
         if (ele.tagName == "SELECT") {
-          const modifier = parseInt(ele.getAttribute("modifier"))
+          const modifier = parseInt(ele.getAttribute("damage-modifier"))
           totalArmorReduction += parseInt(ele.value)
           modifiers += modifier
         }
       })
 
       let aReduction = dmgValue - dmgValue * (totalArmorReduction / 100);
-      let ptReduction = aReduction * ((pt + modifiers) / 100);      
+      let ptReduction = aReduction * ((pt + modifiers) / 100);
       let totalReduction = aReduction - ptReduction;
 
       total.innerText = totalReduction / dmgValue < 0.1 ? "MAX " + (0.1 * dmgValue).toFixed(2) : totalReduction.toFixed(2);
@@ -212,11 +227,11 @@
           const option = document.createElement("option");
           option.text = t.type;
           option.value = t.rating;
-          option.setAttribute("modifier", t.modifier);
+          option.setAttribute("damage-modifier", t.modifier);
           select.add(option);
         });
 
-        select.setAttribute("modifier", gear[0].modifier);
+        select.setAttribute("damage-modifier", gear[0].modifier);
 
         const label = document.createElement("label");
         label.innerText = slots[i];
@@ -226,8 +241,8 @@
         options.appendChild(row);
         select.addEventListener("change", (ev) => {
           const mod =
-            ev.target.options[ev.target.selectedIndex].getAttribute("modifier");
-          ev.srcElement.setAttribute("modifier", mod);
+            ev.target.options[ev.target.selectedIndex].getAttribute("damage-modifier");
+          ev.srcElement.setAttribute("damage-modifier", mod);
           calc();
         });
       }
