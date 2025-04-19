@@ -14,7 +14,7 @@
 }
 
 body, input, select {
-  font-size:1.2rem;
+  font-size:1.3rem;
 }
 
 div {
@@ -41,9 +41,9 @@ border-bottom:1px solid #333;
             padding-bottom:.8rem;
             padding-left:1rem;
         }
- #game {
-    width:375px;
- }
+.row {
+    float:left;clear:both;
+}
         div h2 {
             display:inline-block;
             margin:0;padding:0;
@@ -78,28 +78,40 @@ h3 {
 <body>
     <h1>7Days Armor Reduction Calculator</h1>
     <div id="game">
-        <label>Difficulty</label>
-        <select id="difficulty"></select>
-        <label>Enemy</label>
-        <select id="enemy"></select>
-        <label>Damage per hit</label>
-        <h2 id="damage">10</h2>
+        <div class="row">
+            <label>Difficulty</label>
+            <select id="difficulty"></select>
+        </div>
+        <div class="row">
+            <label>Enemy</label>
+            <select id="enemy"></select>
+        </div>
+        <div class="row">
+            <label>Damage per hit</label>
+            <h2 id="damage">10</h2>
+        </div>  
       </div>
       <div>
-        <label>Pain Tolerance</label>
-        <select id="painTolerance">
-          <option value="0">0</option>
-          <option value="5">1 (5%)</option>
-          <option value="10">2 (10%)</option>
-          <option value="15">3 (15%)</option>
-          <option selected value="20">4 (20%)</option>
-          <option value="25">5 (25%)</option>
-        </select>
+          <div class="row">
+              <label>Pain Tolerance</label>
+            <select id="painTolerance">
+              <option value="0">0</option>
+              <option value="5">1 (5%)</option>
+              <option value="10">2 (10%)</option>
+              <option value="15">3 (15%)</option>
+              <option selected value="20">4 (20%)</option>
+              <option value="25">5 (25%)</option>
+            </select>
+          </div>
+        
       </div>
       <div id="armor"></div>
     <div id="damageTaken">
-        <label>Damage taken</label>
-      <h2 id="total"></h2>
+        <div class="row">
+            <label>Damage taken</label>
+          <h2 id="total"></h2>
+        </div>
+        
     </div>
       
 <script>
@@ -183,7 +195,9 @@ function calc() {
 
 function buildOptions() {
   for (let i = 0; i < slots.length; i++) {
-    const select = document.createElement("select")
+      const row = document.createElement("div");
+      row.classList.add("row");
+    const select = document.createElement("select");
     gear.forEach((t) => {
       if (i != 1 && t.chest)
       	return;
@@ -200,8 +214,9 @@ function buildOptions() {
     const label = document.createElement("label");
     label.innerText = slots[i];
 
-    options.appendChild(label)
-    options.appendChild(select)
+    row.appendChild(label);
+    row.appendChild(select);
+      options.appendChild(row);
     select.addEventListener("change", (ev) => {
       const mod =
         ev.target.options[ev.target.selectedIndex].getAttribute("modifier");
