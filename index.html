@@ -146,7 +146,7 @@ function calc() {
   let totalArmorReduction = 0;
   let modifiers = 0;
   let pt = parseInt(painTolerance.value);
-  damage.value = difficulty.value * enemy.value;
+  damage.innerText = difficulty.value * enemy.value;
 
   options.childNodes.forEach((ele) => {
     if (ele.tagName == "SELECT") {
