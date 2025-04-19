@@ -166,7 +166,7 @@ function calc() {
   console.log(aReduction, pt, modifiers);
   let totalReduction = aReduction - ptReduction;
   total.innerText =
-    totalReduction / dmgValue < 0.1 ? "MAX " + 0.1 * dmgValue : totalReduction;
+    totalReduction / dmgValue < 0.1 ? "MAX " + (0.1 * dmgValue).toFixed(2) : totalReduction.toFixed(2);
 }
 
 function buildOptions() {
