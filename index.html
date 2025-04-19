@@ -23,11 +23,13 @@
 
   .content {
     margin: 1em;
+    margin-bottom:1.5em;
   }
 
   .row {
     float: left;
     clear: both;
+    margin-bottom:.2em;
   }
 
   label {
@@ -61,10 +63,6 @@
 
   #damageTaken h2 {
     color: #AA0000;
-  }
-
-  #armor {
-    width: 275px;
   }
 
   #game>select {
@@ -196,11 +194,10 @@
       })
 
       let aReduction = dmgValue - dmgValue * (totalArmorReduction / 100);
-      let ptReduction = aReduction * ((pt + modifiers) / 100);
-      console.log(aReduction, pt, modifiers);
+      let ptReduction = aReduction * ((pt + modifiers) / 100);      
       let totalReduction = aReduction - ptReduction;
-      total.innerText =
-        totalReduction / dmgValue < 0.1 ? "MAX " + (0.1 * dmgValue).toFixed(2) : totalReduction.toFixed(2);
+
+      total.innerText = totalReduction / dmgValue < 0.1 ? "MAX " + (0.1 * dmgValue).toFixed(2) : totalReduction.toFixed(2);
     }
 
     function buildOptions() {
@@ -217,9 +214,9 @@
           option.value = t.rating;
           option.setAttribute("modifier", t.modifier);
           select.add(option);
-        })
+        });
 
-        select.setAttribute("modifier", gear[0].modifier)
+        select.setAttribute("modifier", gear[0].modifier);
 
         const label = document.createElement("label");
         label.innerText = slots[i];
@@ -232,7 +229,7 @@
             ev.target.options[ev.target.selectedIndex].getAttribute("modifier");
           ev.srcElement.setAttribute("modifier", mod);
           calc();
-        })
+        });
       }
     }
 
@@ -244,7 +241,7 @@
         if (index == 4)
           option.selected = true;
         difficulty.appendChild(option);
-      })
+      });
     }
 
     function buildEnemy() {
@@ -253,7 +250,7 @@
         option.innerText = d.diff;
         option.value = d.dmg;
         enemy.appendChild(option);
-      })
+      });
     }
 
     //events
@@ -274,7 +271,7 @@
     });
 
     //init
-    build()
+    build();
 
   </script>
 </body>
