@@ -147,7 +147,8 @@ function calc() {
   let totalArmorReduction = 0;
   let modifiers = 0;
   let pt = parseInt(painTolerance.value);
-  damage.innerText = difficulty.value * enemy.value;
+    let dmgValue = difficulty.value * enemy.value;
+  damage.innerText = dmgValue;
 
   options.childNodes.forEach((ele) => {
     if (ele.tagName == "SELECT") {
@@ -157,12 +158,12 @@ function calc() {
     }
   })
 
-  let aReduction = damage.value - damage.value * (totalArmorReduction / 100);
+  let aReduction = dmgValue - dmgValue * (totalArmorReduction / 100);
   let ptReduction = aReduction * ((pt + modifiers) / 100);
   console.log(aReduction, pt, modifiers);
   let totalReduction = aReduction - ptReduction;
   total.innerText =
-    totalReduction / damage.value < 0.1 ? "MAX " + 0.1 * damage.value : totalReduction;
+    totalReduction / dmgValue < 0.1 ? "MAX " + 0.1 * dmgValue : totalReduction;
 }
 
 function buildOptions() {
