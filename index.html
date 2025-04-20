@@ -29,7 +29,7 @@
   }
 
   .row {
-    margin-bottom: .4em;
+    margin-bottom: .75em;
     flex: 0 1 100%;
     display:flex;
   }
@@ -46,23 +46,20 @@
   label {
     width: 150px;
     display: inline-block;
-    padding-bottom: 6px;
-  }
+    display:flex;
+    align-items: center;
 
-  input {
-    font-size: 1.5rem;
-    width: 4rem;
   }
 
   input,
   select {
-    padding: 0.2rem;
+    padding: 0.4rem;
   }
 
   h1 {
     border-bottom: 1px solid #333;
-    padding-bottom: .8rem;
-    padding-left: 1rem;
+    padding: .8rem 0;
+    margin:0 1rem;
   }
 
   div h2 {
@@ -96,6 +93,15 @@
   h3 {
     float: left;
     width: 100%;
+  }
+
+  #damageTaken {    
+    border-top: 1px solid #333;
+    padding-top:1rem;
+  }
+
+  #damageTaken label {
+    font-size:1.2em;
   }
 
   @media (max-width: 768px) {
@@ -143,7 +149,7 @@
   <div id="armor" class="content"></div>
   <div id="damageTaken" class="content">
     <div class="row">
-      <label>Damage taken</label>
+      <label><b>Damage Taken</b></label>
       <h2 id="total"></h2>
     </div>
   </div>
