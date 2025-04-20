@@ -18,7 +18,7 @@
   body,
   input,
   select {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
 
   .content {
@@ -31,6 +31,12 @@
   .row {
     margin-bottom: .4em;
     flex: 0 1 100%;
+    display:flex;
+  }
+
+  .row small {
+    flex:1 0 100%;
+    width:100%;
   }
 
   .row:last-child {
@@ -38,7 +44,7 @@
   }
 
   label {
-    width: 160px;
+    width: 150px;
     display: inline-block;
     padding-bottom: 6px;
   }
@@ -83,6 +89,10 @@
     margin: 0;
   }
 
+  .armor-level {
+    width:40px;
+  }
+
   h3 {
     float: left;
     width: 100%;
@@ -94,6 +104,7 @@
     select {
       width: 100%;
     }
+
   }
 </style>
 
@@ -124,10 +135,10 @@
         <option selected value="20">4 (20%)</option>
         <option value="25">5 (25%)</option>
       </select>
-      <br />
+    </div>
+    <div class="row">
       <small>*Reduces damage received <b>after</b> armor damage reduction</small>
     </div>
-
   </div>
   <div id="armor" class="content"></div>
   <div id="damageTaken" class="content">
@@ -180,12 +191,18 @@
       { type: "Heavy 4", rating: 19.8, modifier: 0 },
       { type: "Heavy 5", rating: 20.4, modifier: 0 },
       { type: "Heavy 6", rating: 21, modifier: 0 },
-    ]
+    ];
+
+    const gearList = [
+      "Light",
+      "Medium",
+      "Heavy"
+    ];
 
     const slots = ["Head", "Chest", "Gloves", "Boots"];
 
     function build() {
-      buildOptions();
+      buildArmor();
       buildDifficulty();
       buildEnemy();
 
@@ -201,11 +218,11 @@
       damage.innerText = dmgValue;
 
       options.childNodes.forEach((ele) => {
-        if (ele.tagName == "SELECT") {
-          const modifier = parseInt(ele.getAttribute("damage-modifier"))
-          totalArmorReduction += parseInt(ele.value)
-          modifiers += modifier
-        }
+        const select = ele.getElementsByTagName('select')[0];
+        //if (ele.tagName == "SELECT") {
+          totalArmorReduction += parseInt(select.value);
+          modifiers += parseInt(select.getAttribute("damage-modifier"));
+        //}
       })
 
       let aReduction = dmgValue - dmgValue * (totalArmorReduction / 100);
@@ -215,12 +232,23 @@
       total.innerText = totalReduction / dmgValue < 0.1 ? "MAX " + (0.1 * dmgValue).toFixed(2) : totalReduction.toFixed(2);
     }
 
-    function buildOptions() {
+    function buildArmor() {
       for (let i = 0; i < slots.length; i++) {
         const row = document.createElement("div");
         row.classList.add("row");
-        const select = document.createElement("select");
-        gear.forEach((t) => {
+        const armor = document.createElement("select");
+        const armorLevel = document.createElement("select");
+
+        armorLevel.classList.add("armor-level");
+
+        //build armor level
+        for (let al = 1; al < 7; al++) {
+          const option = document.createElement("option");
+          option.text = al;
+          armorLevel.add(option);
+        }
+
+        gear.forEach((t, index) => {
           if (i != 1 && t.chest)
             return;
 
@@ -228,23 +256,24 @@
           option.text = t.type;
           option.value = t.rating;
           option.setAttribute("damage-modifier", t.modifier);
-          select.add(option);
+          armor.add(option);
         });
 
-        select.setAttribute("damage-modifier", gear[0].modifier);
+        armor.setAttribute("damage-modifier", gear[0].modifier);
 
         const label = document.createElement("label");
         label.innerText = slots[i];
 
         row.appendChild(label);
-        row.appendChild(select);
         options.appendChild(row);
-        select.addEventListener("change", (ev) => {
-          const mod =
-            ev.target.options[ev.target.selectedIndex].getAttribute("damage-modifier");
+        armor.addEventListener("change", (ev) => {
+          const mod = ev.target.options[ev.target.selectedIndex].getAttribute("damage-modifier");
           ev.srcElement.setAttribute("damage-modifier", mod);
           calc();
         });
+
+        //row.appendChild(armorLevel);
+        row.appendChild(armor);
       }
     }
 
@@ -269,14 +298,6 @@
     }
 
     //events
-    damage.addEventListener("keyup", () => {
-      calc();
-    });
-
-    painTolerance.addEventListener("change", () => {
-      calc();
-    });
-
     difficulty.addEventListener("change", () => {
       calc();
     });
@@ -284,6 +305,12 @@
     enemy.addEventListener("change", () => {
       calc();
     });
+
+    painTolerance.addEventListener("change", () => {
+      calc();
+    });
+
+    
 
     //init
     build();
